@@ -5,8 +5,8 @@ require('dotenv').config();
 
 var app = express();
 
+app.use(express.urlencoded({extended:true}));
 require('./routes/main.js')(app);
-
 
 var mysql_user = process.env.MYSQL_USER;
 var mysql_host = process.env.MYSQL_HOST;
@@ -34,7 +34,7 @@ app.set("views",__dirname + "/views");
 app.set("view engine", "ejs");                                                                                                                
 app.engine("html",require("ejs").renderFile)
 
-var server = app.listen(3000, function () {
+var server = app.listen(5000, function () {
     var port = server.address().port;
     console.log(`Express app listening on port ${port}`);
 });

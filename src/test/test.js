@@ -28,6 +28,13 @@ describe("Server starts up",function () {
         request(server).get('/about').expect(200,done);
     });
 
+    it('responds to /signup', function testSlash(done) {
+        request(server).get('/signup').expect(200,done);
+    });
+    it('responds to /signup post', function testSlash(done) {
+        request(server).post('/signup').expect(200,done);
+    });
+
     it('responds to 404 for unrecognised paths', function testPath(done) {
         request(server).get('/foo').expect(404,done);
     });
