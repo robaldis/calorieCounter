@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Sign up</title>
+        <title>Login</title>
     </head>
     <body>
         <% -include("nav.ejs") %>
@@ -9,11 +9,10 @@
         <form method="POST">
             <input name="username" id="username" type="text">User name</input><br>
             <input name="password" id="password" type="password">password</input><br>
-            <input name="repassword" id="repassword" type="password">re-enter password</input><br>
 
             <input type="submit">
         </form>
-        <a href='/login'>LOGIN</a>
+        <a href='/signup'>SIGN UP</a>
 
 
         <p><%=err%></p>

@@ -6,14 +6,22 @@
     <body>
         <% -include("nav.ejs") %>
 
-        <form method="POST">
+        <form method="POST" action="/changeUsername">
             <input name="username" id="username" type="text">User name</input><br>
+            <input name="newUsername" id="newUsername" type="text">new User name</input><br>
+
+            <input type="submit">
+        </form>
+        <form method="POST" action="/changePassword">
+            <input name="oldPassword" id="oldPassword" type="password">Old Password</input><br>
             <input name="password" id="password" type="password">password</input><br>
             <input name="repassword" id="repassword" type="password">re-enter password</input><br>
 
             <input type="submit">
         </form>
-        <a href='/login'>LOGIN</a>
+        <form method="POST" action="/logout">
+            <input type="submit">logout</input>
+        </form>
 
 
         <p><%=err%></p>

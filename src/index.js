@@ -1,25 +1,38 @@
 const express = require('express');
 const mysql = require('mysql');
+const session = require('express-session');
+const MySqlStore = require('express-mysql-session')(session);
 require('dotenv').config();
 
-
-var app = express();
-
-app.use(express.urlencoded({extended:true}));
-require('./routes/main.js')(app);
 
 var mysql_user = process.env.MYSQL_USER;
 var mysql_host = process.env.MYSQL_HOST;
 var mysql_password = process.env.MYSQL_PASSWORD;
 
-
-const db = mysql.createConnection({
+var options = { 
     host: mysql_host,
     user: mysql_user,
     password: mysql_password,
     database:"calorieCounter",
     insecureAuth: true
-});
+}
+
+const db = mysql.createConnection(options);
+
+var app = express();
+var sessionStore = new MySqlStore(options, db);
+
+app.use(express.urlencoded({extended:true}));
+app.use(session({key:'temp', 
+    secret: 'temp', 
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false
+}));
+
+require('./routes/main.js')(app);
+
+
 
 db.connect((err)=>{                                                                                                                           
     if (err) {                                                                                                                                
@@ -27,6 +40,7 @@ db.connect((err)=>{
     }                                                                                                                                         
     console.log("Connected to database");                                                                                                     
 });                                                                                                                                           
+
 global.db = db; 
 
 
