@@ -27,7 +27,7 @@ module.exports = function (app) {
     });
 
     app.get('/about', function (req, res) {
-        res.send("ok");
+        res.render("about.html");
     });
 
 
