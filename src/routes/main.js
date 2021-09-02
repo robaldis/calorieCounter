@@ -174,4 +174,14 @@ module.exports = function (app) {
             });
         });
     });
+
+    app.get('/createMeal', function (req, res) {
+        res.render('createMeal.html', {err:""});
+
+    });
+
+    app.post('/createMeal', function (req, res) {
+        console.log(req.body.ingredientName.length);
+        red.redirect('/');
+    });
 }
