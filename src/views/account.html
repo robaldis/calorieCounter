@@ -2,26 +2,39 @@
 <html>
     <head>
         <title>Sign up</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     </head>
     <body>
-        <% -include("nav.ejs") %>
+        <%- include("nav.ejs") %>
 
-        <form method="POST" action="/changeUsername">
-            <input name="username" id="username" type="text">User name</input><br>
-            <input name="newUsername" id="newUsername" type="text">new User name</input><br>
+        <div class="text-center mt-5">
+            <div class="border border-primary p-2 rounded m-5">
+            <form method="POST" action="/changeUsername"style="max-width:480px;margin:auto;">
+                <h1 class="mt-4 mb-4"> Change Username</h1>
+                <input name="username" id="username" type="text" class="form-control mb-3" placeholder="Username">
+                <input name="newUsername" id="newUsername" type="text" class="form-control mb-3" placeholder="New Username">
 
-            <input type="submit">
-        </form>
-        <form method="POST" action="/changePassword">
-            <input name="oldPassword" id="oldPassword" type="password">Old Password</input><br>
-            <input name="password" id="password" type="password">password</input><br>
-            <input name="repassword" id="repassword" type="password">re-enter password</input><br>
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Change</button>
+            </form>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <div class="border border-primary p-2 rounded m-5">
+                <form method="POST" action="/changePassword"style="max-width:480px;margin:auto;">
+                    <h1 class="mt-4 mb-4"> Change Password</h1>
+                    <input name="oldPassword" id="oldPassword" type="password" class="form-control mb-3" placeholder="Username">
+                    <input name="password" id="password" type="password" class="form-control mb-3" placeholder="Username">
+                    <input name="repassword" id="repassword" type="password" class="form-control mb-3" placeholder="Username">
 
-            <input type="submit">
+                    <button type="submit" class="btn btn-lg btn-primary btn-block">Change</button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+        <form method="POST" action="/logout"style="max-width:480px;margin:auto;">
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Logout</button>
         </form>
-        <form method="POST" action="/logout">
-            <input type="submit">logout</input>
-        </form>
+        </div>
 
 
         <p><%=err%></p>
