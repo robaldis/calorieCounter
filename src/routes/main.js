@@ -23,7 +23,7 @@ function isUsernameInDatabase(username) {
 module.exports = function (app) {
 
     app.get('/', function (req, res) {
-        res.render("home.html");
+        res.render("home.html", {"meals": [{"name":"blaa", "calories":"20"},{"name":"blaa", "calories":"20"}]});
     });
 
     app.get('/about', function (req, res) {
