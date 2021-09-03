@@ -177,11 +177,39 @@ module.exports = function (app) {
 
     app.get('/createMeal', function (req, res) {
         res.render('createMeal.html', {err:""});
+        var ingredients = [];
+        var calories;
+        for (var i = 0; i< req.body.ingredientNames; i++) {
+            var id = addIngredient(req.body.ingredientNames[i], req.body.ingredientCalories[i]);
+            ingredients.push(id);
+            calories += int(req.body.ignredientCalories[i]);
+        }
 
+        addMeal(req.body.mealName, calories, ingredients);
     });
 
     app.post('/createMeal', function (req, res) {
         console.log(req.body.ingredientName.length);
         red.redirect('/');
     });
+}
+
+function addMeal(name, calories, ingredients) {
+    // name: String
+    // calories: String
+    // ingredients: List<ingredientIds>
+
+    // Add the meal to the database and get the id back
+
+    // for every id in ingredeints add it to the junction table to connect it to
+    // a meal
+
+}
+
+function addIngredient(name, calories) {
+    var id;
+
+
+    // Return the id of the ingredient
+    return id;
 }
