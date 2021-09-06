@@ -188,28 +188,131 @@ module.exports = function (app) {
         addMeal(req.body.mealName, calories, ingredients);
     });
 
-    app.post('/createMeal', function (req, res) {
-        console.log(req.body.ingredientName.length);
-        red.redirect('/');
+    app.post('/createMeal', async function (req, res) {
+        // Add all of the ingredients
+        var ingredientIds = [];
+        var totCalories = 0;
+        
+        // Add all the ingredients
+        for (var i = 0; i < req.body.ingredientName.length; i++) {
+            console.log("something");
+            try {
+                let row = await addIngredient(req.body.ingredientName[i], req.body.ingredientCalories[i]);
+                ingredientIds.push(row[0]);
+                console.log(parseInt(row[2]));
+                totCalories += parseInt(row[2]);
+            } catch(err) {
+                console.log(err);
+                res.render('createMeal.html', {err:"Something went wrong try again"});
+                return;
+            }
+        }
+
+        // Add meal to database
+        try {
+            mealId = await addMeal(req.body.mealName, totCalories);
+        } catch(err) {
+            console.log(err);
+            res.render('createMeal.html', {err:"name taken"});
+            return
+        }
+
+
+        // Add to junction table
+        try {
+            await linkIngredientsToMeal(mealId, ingredientIds);
+            res.render('createMeal.html', {err:"Meal added"});
+        } catch (err) {
+            res.render('createMeal.html', {err:"somthing went wrong, not all ingredients have been added"});
+        }
     });
 }
 
-function addMeal(name, calories, ingredients) {
+function addMeal(name, calories) {
     // name: String
     // calories: String
     // ingredients: List<ingredientIds>
 
-    // Add the meal to the database and get the id back
+    console.log(name);
+    console.log(calories);
+    var id;
+    return new Promise( function(resolve, reject) {
+        db.query(`SELECT * FROM meals WHERE name = '${name}';`, function (err, result) {
+            if (err) {
+                reject(err);
+            } else {
+                if (result.length == 0) {
+                    // Add new
+                    db.query(`INSERT INTO meals (name, calories) VALUES ('${name}', ${calories});`, function (err, result) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            console.log(result)
+                            id = result.insertId;
+                            resolve([id,name,calories]);
+                        }
+                    });
 
-    // for every id in ingredeints add it to the junction table to connect it to
-    // a meal
-
+                } else {
+                    reject("name taken");
+                }
+            }
+        });
+    });
 }
 
 function addIngredient(name, calories) {
     var id;
 
+    return new Promise(function (resolve, reject) {
+        // Does the ingredient already exist
+        // if so then update calorie count
+        db.query(`SELECT * FROM ingredients WHERE name = '${name}';`, function (err, ingredient) {
+            if (err) {
+                reject("Failed");
+            } else {
+                if (ingredient.length == 0) {
+                    // Add a new one
+                    db.query(`INSERT INTO ingredients (name, calories) VALUES ('${name}', ${parseInt(calories)});`, function (err, result) {
+                        if (err) {
+                            reject("Failed");
+                        } else {
+                            console.log("Adding a new one")
+                            console.log(result)
+                            id = result.insertId
+                            resolve([id, name, calories])
+                        }
+                    });
+                } else {
+                    // Update
+                    db.query(`UPDATE ingredients SET calories=${parseInt(calories)} WHERE name='${name}'`, function(err, result) {
 
-    // Return the id of the ingredient
-    return id;
+                        if (err) {
+                            reject("Failed");
+                        } else {
+                            id = ingredient[0].id;
+                            console.log(id);
+                            resolve([id, name, calories])
+                        }
+                    });
+                }
+            }
+        });
+    });
+}
+
+function linkIngredientsToMeal(meal, ingredients) {
+    console.log(ingredients.length);
+    return new Promise(function (resolve, reject) {
+        for (var i = 0; i < ingredients.length; i++) {
+            console.log("The loop to add all the things inside junction table is runnign");
+            db.query(`INSERT INTO meal_ingredionts (meal_id, ingredient_id) VALUES (${parseInt(meal[0])}, ${ingredients[i]});`, function (err, result) {
+                console.log(err);
+                if (err) {
+                    reject(err);
+                }
+            });
+        }
+        resolve();
+    });
 }
