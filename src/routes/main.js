@@ -23,7 +23,16 @@ function isUsernameInDatabase(username) {
 module.exports = function (app) {
 
     app.get('/', function (req, res) {
-        res.render("home.html", {"meals": [{"name":"blaa", "calories":"20"},{"name":"blaa", "calories":"20"}]});
+        var meals = [];
+        // Get all meals
+        db.query(`SELECT * FROM meals`, function(err,result) {
+            if (err) {
+                res.render("home.html", {"err": "could not get data", "meals": []});
+                return;
+            }
+            meals = result;
+            res.render("home.html", {"err": "", "meals": meals});
+        });
     });
 
     app.get('/about', function (req, res) {
@@ -226,6 +235,35 @@ module.exports = function (app) {
             res.render('createMeal.html', {err:"somthing went wrong, not all ingredients have been added"});
         }
     });
+
+    app.get('/meal', function(req, res) {
+        // Get the meal that is being requested
+        // Get all the ingredients that are associated with that meal
+        var name = req.query.name
+        db.query(`SELECT * FROM meals WHERE name='${name}';`, function (err, result) {
+            console.log(result);
+            if (err) {
+                res.render('meal.html', {err:"Could not get meal", meal:{name:"", calories:""}, ingredients:[]});
+                return;
+            }
+            db.query(`SELECT ingredients.name, ingredients.calories 
+                FROM meal_ingredients  
+                JOIN meals on meal_ingredients.meal_id = meals.id 
+                JOIN ingredients on meal_ingredients.ingredient_id  = ingredients.id
+                WHERE meal_id = '${result[0].id}'`, function (err, ings) {
+                    console.log(ings);
+                if (err) {
+                    console.log(err);
+                }
+
+                res.render('meal.html', {err:"", meal:{name:result[0].name, calories:result[0].calories}, ingredients:ings});
+            });
+
+        });
+
+
+
+    });
 }
 
 function addMeal(name, calories) {
@@ -306,7 +344,7 @@ function linkIngredientsToMeal(meal, ingredients) {
     return new Promise(function (resolve, reject) {
         for (var i = 0; i < ingredients.length; i++) {
             console.log("The loop to add all the things inside junction table is runnign");
-            db.query(`INSERT INTO meal_ingredionts (meal_id, ingredient_id) VALUES (${parseInt(meal[0])}, ${ingredients[i]});`, function (err, result) {
+            db.query(`INSERT INTO meal_ingredients (meal_id, ingredient_id) VALUES (${parseInt(meal[0])}, ${ingredients[i]});`, function (err, result) {
                 console.log(err);
                 if (err) {
                     reject(err);

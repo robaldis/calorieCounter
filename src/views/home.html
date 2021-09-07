@@ -8,15 +8,29 @@
     <%- include('nav.ejs'); %>
     
     <div class="text-center mt-5">
-    <div class="border border-primary p-2 text-center" style="margin:auto;max-width:600px;">
-        <h1>Meals</h1>
-        <% meals.forEach(function(item) { %>
-                <div class="mt-3 text-center border border-dark d-flex ingredient" style="background:lightgrey;" id="ingredient">
-                    <p style="margin:auto;" class=""><%=item.name%></p>
-                    <p style="margin:auto;" class=""><%=item.calories%></p>
+        <div class="border border-primary p-2 text-center" style="margin:auto;max-width:600px;">
+            <h1>Meals</h1>
+            <% meals.forEach(function(item) { %>
+            <form class="mt-3 text-center border border-dark d-flex ingredient" method="GET" action="/meal" onclick="mealClick(this)" style="background:lightgrey;" id="meal">
+                <div style="margin:auto;">
+                    <input name="name"  class="name" type="hidden" value=<%=item.name%> ><%=item.name%></input>
                 </div>
-        <% }) %>
+                <div style="margin:auto;">
+                    <input name="calories" class="calories" type="hidden"  value=<%=item.calories%>><%=item.calories%></input>
+                </div>
+            </form>
+            <% }) %>
+        </div>
+        <p class="text-danger"><%=err%></p>
     </div>
-    </div>
+
+
+            <script>
+                function mealClick(event) {
+                                    event.submit();
+                                    console.log(event.getElementsByTagName('p')[0].innerHTML);
+
+                                }
+            </script>
 
 </body>
