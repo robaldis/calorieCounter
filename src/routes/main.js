@@ -167,7 +167,6 @@ module.exports = function (app) {
                 // Hash the new function
                 if (passComp) {
                     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-                        console.log(req.body.password);
                         db.query(`UPDATE users SET password='${hash}' WHERE name='${req.session.username}'`, function(err, results) {
                             if (err) {
                                 console.log(err);
@@ -204,11 +203,9 @@ module.exports = function (app) {
         
         // Add all the ingredients
         for (var i = 0; i < req.body.ingredientName.length; i++) {
-            console.log("something");
             try {
                 let row = await addIngredient(req.body.ingredientName[i], req.body.ingredientCalories[i]);
                 ingredientIds.push(row[0]);
-                console.log(parseInt(row[2]));
                 totCalories += parseInt(row[2]);
             } catch(err) {
                 console.log(err);
@@ -241,7 +238,6 @@ module.exports = function (app) {
         // Get all the ingredients that are associated with that meal
         var name = req.query.name
         db.query(`SELECT * FROM meals WHERE name='${name}';`, function (err, result) {
-            console.log(result);
             if (err) {
                 res.render('meal.html', {err:"Could not get meal", meal:{name:"", calories:""}, ingredients:[]});
                 return;
@@ -251,7 +247,6 @@ module.exports = function (app) {
                 JOIN meals on meal_ingredients.meal_id = meals.id 
                 JOIN ingredients on meal_ingredients.ingredient_id  = ingredients.id
                 WHERE meal_id = '${result[0].id}'`, function (err, ings) {
-                    console.log(ings);
                 if (err) {
                     console.log(err);
                 }
@@ -271,8 +266,6 @@ function addMeal(name, calories) {
     // calories: String
     // ingredients: List<ingredientIds>
 
-    console.log(name);
-    console.log(calories);
     var id;
     return new Promise( function(resolve, reject) {
         db.query(`SELECT * FROM meals WHERE name = '${name}';`, function (err, result) {
@@ -285,7 +278,6 @@ function addMeal(name, calories) {
                         if (err) {
                             reject(err);
                         } else {
-                            console.log(result)
                             id = result.insertId;
                             resolve([id,name,calories]);
                         }
@@ -315,8 +307,6 @@ function addIngredient(name, calories) {
                         if (err) {
                             reject("Failed");
                         } else {
-                            console.log("Adding a new one")
-                            console.log(result)
                             id = result.insertId
                             resolve([id, name, calories])
                         }
@@ -329,7 +319,6 @@ function addIngredient(name, calories) {
                             reject("Failed");
                         } else {
                             id = ingredient[0].id;
-                            console.log(id);
                             resolve([id, name, calories])
                         }
                     });
@@ -340,10 +329,8 @@ function addIngredient(name, calories) {
 }
 
 function linkIngredientsToMeal(meal, ingredients) {
-    console.log(ingredients.length);
     return new Promise(function (resolve, reject) {
         for (var i = 0; i < ingredients.length; i++) {
-            console.log("The loop to add all the things inside junction table is runnign");
             db.query(`INSERT INTO meal_ingredients (meal_id, ingredient_id) VALUES (${parseInt(meal[0])}, ${ingredients[i]});`, function (err, result) {
                 console.log(err);
                 if (err) {
