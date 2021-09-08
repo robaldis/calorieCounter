@@ -45,6 +45,7 @@ global.db = db;
 
 
 app.set("views",__dirname + "/views");                                                                                                        
+app.use(express.static(__dirname + "/scripts"));                                                                                                        
 app.set("view engine", "ejs");                                                                                                                
 app.engine("html",require("ejs").renderFile)
 

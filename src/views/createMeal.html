@@ -3,6 +3,7 @@
     <head>
         <title>Sign up</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+        <script src="/createMeal.js"></script>
     </head>
     <body>
         <%- include("nav.ejs") %>
@@ -29,22 +30,6 @@
         </form>
             <p><%=err%></p>
         </div>
-
-                <script>
-                    function addIngredient() {
-                                            console.log("doing");
-                                            var itm = document.getElementById("ingredient");
-                                            var cln = itm.cloneNode(true);
-                                            var ingredients = document.getElementsByClassName("ingredient");
-
-                                            cln.children[0].name = cln.children[0].name.replace("0", `${ingredients.length}`)
-                                            cln.children[1].name = cln.children[1].name.replace("0", `${ingredients.length}`)
-
-                                            document.getElementById("ingredients").appendChild(cln);
-                                        }
-
-                </script>
-
     </body>
 
 </html>
